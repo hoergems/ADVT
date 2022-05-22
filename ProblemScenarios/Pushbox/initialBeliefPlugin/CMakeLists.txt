@@ -1,0 +1,1 @@
+ADD_INITIAL_BELIEF_PLUGIN(pushboxInitialBeliefPlugin ${CMAKE_CURRENT_LIST_DIR}/PushboxInitialBeliefPlugin.cpp)

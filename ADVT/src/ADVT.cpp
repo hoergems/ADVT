@@ -125,20 +125,25 @@ bool ADVT::improvePolicy(const FloatType &timeout) {
 
 FloatType ADVT::search(TreeElement *currentBelief, RobotStateSharedPtr &state, int &depth) {
 	auto options = static_cast<const ADVTOptions *>(problemEnvironmentOptions_);
-	if (depth == options->maximumDepth)
-		return 0.0;
+	if (depth == options->maximumDepth) {
+		std::shared_ptr<HeuristicInfo> heuristicInfo(new HeuristicInfo);
+		heuristicInfo->currentState = state;
+		heuristicInfo->discountFactor = problemEnvironmentOptions_->discountFactor;
+		return heuristicPlugin_->getHeuristicValue(heuristicInfo.get());
+	}
 	depth++;
+
 	TreeElement *currentBeliefNode = currentBelief;
 	ObservationResultSharedPtr obsRes = nullptr;
 	propRes_->nextState = state;
 	if (robotPlanningEnvironment_->isTerminal(propRes_))
 		return 0.0;
 
-	// Select Action
+	// Select action
 	auto actionInfo = currentBelief->as<BeliefNode>()->selectAction();
 	auto action = actionInfo.first->as<PartitionNode>()->getAction();
 
-	// Sample next state, observation, reward
+	// Sample next state
 	propReq_->currentState = state;
 	propReq_->action = action;
 	propRes_ = robotPlanningEnvironment_->getRobot()->propagateState(propReq_);
@@ -148,7 +153,7 @@ FloatType ADVT::search(TreeElement *currentBelief, RobotStateSharedPtr &state, i
 	obsReq_->action = action;
 	obsRes = robotPlanningEnvironment_->getRobot()->makeObservationReport(obsReq_);
 
-	// Get reward
+	// Sample reward
 	FloatType reward = robotPlanningEnvironment_->getReward(propRes_);
 
 	// Go to the next belief
@@ -158,6 +163,7 @@ FloatType ADVT::search(TreeElement *currentBelief, RobotStateSharedPtr &state, i
 
 	FloatType expectedReward = 0.0;
 	if (currentBelief->as<BeliefNode>()->isNew()) {
+		// If we reached a new belief node, compute a heuristic estimate of its value
 		initBeliefNode_(currentBelief);
 		std::shared_ptr<HeuristicInfo> heuristicInfo(new HeuristicInfo);
 		heuristicInfo->currentState = state;
@@ -169,7 +175,7 @@ FloatType ADVT::search(TreeElement *currentBelief, RobotStateSharedPtr &state, i
 		expectedReward = reward + options->discountFactor * search(currentBelief, state, depth);
 	}
 
-
+	// Update statistics
 	currentBeliefNode->as<BeliefNode>()->updateVisitCount(1);
 	currentBeliefNode->as<BeliefNode>()->updateAgent(actionInfo.first, expectedReward);
 	if (options->bellmanBackup and depth != 1)

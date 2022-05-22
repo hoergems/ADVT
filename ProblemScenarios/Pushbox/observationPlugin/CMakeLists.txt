@@ -1,0 +1,2 @@
+ADD_OBSERVATION_PLUGIN(pushboxObservationPlugin ${CMAKE_CURRENT_LIST_DIR}/PushboxObservationPlugin.cpp)
+

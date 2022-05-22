@@ -1,0 +1,1 @@
+ADD_REWARD_PLUGIN(pushboxRewardPlugin ${CMAKE_CURRENT_LIST_DIR}/PushboxRewardPlugin.cpp)

@@ -1,0 +1,1 @@
+ADD_TRANSITION_PLUGIN(pushboxTransitionPlugin ${CMAKE_CURRENT_LIST_DIR}/PushboxTransitionPlugin.cpp)

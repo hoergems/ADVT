@@ -1,0 +1,1 @@
+ADD_TERMINAL_PLUGIN(pushboxTerminalPlugin ${CMAKE_CURRENT_LIST_DIR}/PushboxTerminalPlugin.cpp)

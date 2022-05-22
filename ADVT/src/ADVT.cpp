@@ -131,13 +131,14 @@ FloatType ADVT::search(TreeElement *currentBelief, RobotStateSharedPtr &state, i
 		heuristicInfo->discountFactor = problemEnvironmentOptions_->discountFactor;
 		return heuristicPlugin_->getHeuristicValue(heuristicInfo.get());
 	}
-	depth++;
 
+	depth++;
 	TreeElement *currentBeliefNode = currentBelief;
 	ObservationResultSharedPtr obsRes = nullptr;
 	propRes_->nextState = state;
-	if (robotPlanningEnvironment_->isTerminal(propRes_))
+	if (robotPlanningEnvironment_->isTerminal(propRes_)) {
 		return 0.0;
+	}
 
 	// Select action
 	auto actionInfo = currentBelief->as<BeliefNode>()->selectAction();

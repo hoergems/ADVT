@@ -1,5 +1,3 @@
-#ifndef _PUSHBOX_OBSERVATION_PLUGIN_HPP_
-#define _PUSHBOX_OBSERVATION_PLUGIN_HPP_
 #include <oppt/plugin/Plugin.hpp>
 #include "PushboxObservationPluginOptions.hpp"
 #include "TruncatedNormal.hpp"
@@ -115,28 +113,6 @@ private:
     FloatType calcLikelihoodBearingObservation_(const RobotStateSharedPtr &state,
             const Action *action,
             const Observation *observation) const {
-        /**auto obs = observation->as<BearingObservation>();
-        if (state->getUserData()->as<PushboxStateUserData>()->pushed != obs->getPushed())
-            return 0.0;
-
-        VectorFloat stateVec = state->as<VectorState>()->asVector();
-        unsigned int numDims = stateVec.size() / 2;
-        auto obsBearings = obs->getBearings();
-
-        VectorFloat deltas(stateVec.size() / 2, 0.0);
-        for (size_t i = 0; i != deltas.size(); ++i) {
-            deltas[i] = stateVec[i + numDims] - stateVec[i];
-        }
-
-        VectorInt bearings(deltas.size() - 1, 0);        
-        for (size_t i = 0; i != bearings.size(); ++i) {
-            FloatType angle = std::atan2(deltas[i + 1], deltas[i]) * radians;
-            if (angle < 0) angle += 360.0;
-            if (angle > 360) angle -= 360.0;
-            if (angle < 0) angle = 0.0;            
-            FloatType bearing = std::floor(angle / observationBucketFactor_) * observationBucketFactor_;
-        }*/
-
         ObservationRequestSharedPtr observationRequest(new ObservationRequest());
         ObservationResultSharedPtr observationResult = nullptr;
         observationRequest->currentState = state;
@@ -179,7 +155,5 @@ private:
 };
 
 OPPT_REGISTER_OBSERVATION_PLUGIN(PushboxObservationPlugin)
-
-#endif
 
 }

@@ -1,5 +1,3 @@
-#ifndef _PUSHBOX_TRANSITION_PLUGIN_HPP_
-#define _PUSHBOX_TRANSITION_PLUGIN_HPP_
 #include <oppt/plugin/Plugin.hpp>
 #include "TruncatedNormal.hpp"
 #include "PushboxTransitionPluginOptions.hpp"
@@ -261,5 +259,3 @@ private:
 OPPT_REGISTER_TRANSITION_PLUGIN(PushboxTransitionPlugin)
 
 }
-
-#endif

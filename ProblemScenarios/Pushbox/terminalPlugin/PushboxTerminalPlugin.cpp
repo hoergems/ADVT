@@ -1,5 +1,3 @@
-#ifndef _PUSHBOX_TERMINAL_PLUGIN_HPP_
-#define _PUSHBOX_TERMINAL_PLUGIN_HPP_
 #include <oppt/plugin/Plugin.hpp>
 #include "PushboxStateUserData.hpp"
 
@@ -35,5 +33,3 @@ public :
 OPPT_REGISTER_TERMINAL_PLUGIN(PushboxTerminalPlugin)
 
 }
-
-#endif

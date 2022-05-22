@@ -1,5 +1,3 @@
-#ifndef _PUSHBOX_HEURISTIC_PLUGIN_HPP_
-#define _PUSHBOX_HEURISTIC_PLUGIN_HPP_
 #include <oppt/plugin/Plugin.hpp>
 #include "PushboxStateUserData.hpp"
 #include "PushboxHeuristicOptions.hpp"
@@ -73,5 +71,3 @@ private:
 OPPT_REGISTER_HEURISTIC_PLUGIN(PushboxHeuristicPlugin)
 
 }
-
-#endif

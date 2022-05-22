@@ -1,5 +1,3 @@
-#ifndef _PUSHBOX_REWARD_PLUGIN_HPP_
-#define _PUSHBOX_REWARD_PLUGIN_HPP_
 #include <oppt/plugin/Plugin.hpp>
 #include "PushboxRewardOptions.hpp"
 #include "PushboxStateUserData.hpp"
@@ -48,5 +46,3 @@ private:
 OPPT_REGISTER_REWARD_PLUGIN(PushboxRewardPlugin)
 
 }
-
-#endif

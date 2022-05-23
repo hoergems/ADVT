@@ -1,7 +1,7 @@
 #ifndef _BELIEF_NODE_DATA_HPP_
 #define _BELIEF_NODE_DATA_HPP_
-#include <OpptTree/TreeElementData.hpp>
 #include <oppt/opptCore/core.hpp>
+#include "TreeElementData.hpp"
 
 namespace oppt {
 class BeliefNodeData: public TreeElementData {

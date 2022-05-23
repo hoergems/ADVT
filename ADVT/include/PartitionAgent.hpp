@@ -1,8 +1,8 @@
 #ifndef _PARTITION_AGENT_HPP_
 #define _PARTITION_AGENT_HPP_
-#include <OpptTree/TreeElement.hpp>
-#include <OpptTree/Tree.hpp>
 #include <oppt/opptCore/core.hpp>
+#include "Tree.hpp"
+#include "TreeElement.hpp"
 #include "Partition.hpp"
 #include "ADVTOptions.hpp"
 

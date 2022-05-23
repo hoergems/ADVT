@@ -1,6 +1,6 @@
 #ifndef _ADVT_ACTION_EDGE_HPP_
 #define _ADVT_ACTION_EDGE_HPP_
-#include <OpptTree/TreeElement.hpp>
+#include "TreeElement.hpp"
 #include "ObservationComparator.hpp"
 
 namespace oppt {

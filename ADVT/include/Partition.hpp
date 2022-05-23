@@ -1,7 +1,7 @@
 #ifndef _PARTITION_HPP_
 #define _PARTITION_HPP_
 #include <oppt/opptCore/core.hpp>
-#include <OpptTree/TreeElement.hpp>
+#include "TreeElement.hpp"
 #include "DiameterEstimator.hpp"
 #include "ADVTOptions.hpp"
 #include "DistanceMeasure.hpp"

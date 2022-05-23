@@ -1,9 +1,9 @@
 #ifndef _ADVT_HPP_
 #define _ADVT_HPP_
 #include <oppt/solver/solver.hpp>
-#include <OpptTree/Tree.hpp>
-#include <OpptTree/TreeElement.hpp>
+//#include <OpptTree/TreeElement.hpp>
 #include <oppt/filter/particleFilter/ParticleFilter.hpp>
+#include "Tree.hpp"
 #include "ObservationComparator.hpp"
 #include "DistanceMeasure.hpp"
 #include "DiameterEstimator.hpp"

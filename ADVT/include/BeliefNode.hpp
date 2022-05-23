@@ -1,7 +1,7 @@
 #ifndef _ADVT_BELIEF_NODE_HPP_
 #define _ADVT_BELIEF_NODE_HPP_
-#include <OpptTree/TreeElement.hpp>
 #include <oppt/opptCore/core.hpp>
+#include "TreeElement.hpp"
 #include "PartitionAgent.hpp"
 #include "ActionEdge.hpp"
 #include "ObservationEdge.hpp"

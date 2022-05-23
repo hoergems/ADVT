@@ -1,7 +1,7 @@
 #ifndef _PARTITION_NODE_HPP_
 #define _PARTITION_NODE_HPP_
-#include <OpptTree/TreeElement.hpp>
 #include <oppt/opptCore/core.hpp>
+#include "TreeElement.hpp"
 #include "Partition.hpp"
 
 namespace solvers {

@@ -46,10 +46,10 @@ void PartitionNode::setPartition(TreeElement *const partition) {
 void PartitionNode::updateReward(const FloatType &reward) {
 	if (numVisits_ < 0.5) {
 		averageReward_ = 0.0;
-	}
+	}	
 
 	numVisits_ += 1.0;
-	averageReward_ = averageReward_ + (1.0 / numVisits_) * (reward - averageReward_);
+	averageReward_ += (1.0 / numVisits_) * (reward - averageReward_);	
 	//averageReward_ = (1.0 - 1.0 / numVisits_) * averageReward_ + reward / numVisits_;
 }
 

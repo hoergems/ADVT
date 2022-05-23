@@ -1,7 +1,7 @@
 #ifndef _ADVT_OBSERVATION_EDGE_HPP_
 #define _ADVT_OBSERVATION_EDGE_HPP_
-#include <OpptTree/TreeElement.hpp>
 #include <oppt/opptCore/core.hpp>
+#include "TreeElement.hpp"
 
 namespace oppt {
 class ObservationEdge: public TreeElement {

@@ -125,7 +125,20 @@ bool ADVT::improvePolicy(const FloatType &timeout) {
 
 FloatType ADVT::search(TreeElement *currentBelief, RobotStateSharedPtr &state, int &depth) {
 	auto options = static_cast<const ADVTOptions *>(problemEnvironmentOptions_);
-	if (depth == options->maximumDepth) {
+	propRes_->nextState = state;
+	if (robotPlanningEnvironment_->isTerminal(propRes_)) 		
+		return 0.0;	
+
+	bool requireHeuristic = false;
+	if (currentBelief->as<BeliefNode>()->isNew()) {
+		initBeliefNode_(currentBelief);
+		requireHeuristic = true;
+	}
+
+	if (depth == options->maximumDepth)
+		requireHeuristic = true;
+
+	if (requireHeuristic) {
 		std::shared_ptr<HeuristicInfo> heuristicInfo(new HeuristicInfo);
 		heuristicInfo->currentState = state;
 		heuristicInfo->discountFactor = problemEnvironmentOptions_->discountFactor;
@@ -134,11 +147,7 @@ FloatType ADVT::search(TreeElement *currentBelief, RobotStateSharedPtr &state, i
 
 	depth++;
 	TreeElement *currentBeliefNode = currentBelief;
-	ObservationResultSharedPtr obsRes = nullptr;
-	propRes_->nextState = state;
-	if (robotPlanningEnvironment_->isTerminal(propRes_)) {
-		return 0.0;
-	}
+	ObservationResultSharedPtr obsRes = nullptr;		
 
 	// Select action
 	auto actionInfo = currentBelief->as<BeliefNode>()->selectAction();
@@ -162,19 +171,7 @@ FloatType ADVT::search(TreeElement *currentBelief, RobotStateSharedPtr &state, i
 	currentBelief = currentBelief->as<BeliefNode>()->getOrCreateChild<BeliefNode>(actionInfo.second,
 	                obsRes->observation);
 
-	FloatType expectedReward = 0.0;
-	if (currentBelief->as<BeliefNode>()->isNew()) {
-		// If we reached a new belief node, compute a heuristic estimate of its value
-		initBeliefNode_(currentBelief);
-		std::shared_ptr<HeuristicInfo> heuristicInfo(new HeuristicInfo);
-		heuristicInfo->currentState = state;
-		heuristicInfo->action = action;
-		heuristicInfo->discountFactor = problemEnvironmentOptions_->discountFactor;
-		expectedReward =
-		    reward + options->discountFactor * heuristicPlugin_->getHeuristicValue(heuristicInfo.get());
-	} else {
-		expectedReward = reward + options->discountFactor * search(currentBelief, state, depth);
-	}
+	FloatType expectedReward = reward + options->discountFactor * search(currentBelief, state, depth);	
 
 	// Update statistics
 	currentBeliefNode->as<BeliefNode>()->updateVisitCount(1);

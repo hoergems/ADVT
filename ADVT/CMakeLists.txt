@@ -17,7 +17,6 @@ else()
    find_package(oppt REQUIRED)
 endif()
 
-find_package(opptTree REQUIRED)
 find_package(CGAL REQUIRED)
 
 set(HOOT_SRC 
@@ -36,7 +35,10 @@ set(HOOT_SRC
                ${CMAKE_CURRENT_LIST_DIR}/src/RectanglePartition.cpp
                ${CMAKE_CURRENT_LIST_DIR}/src/VoronoiPartition.cpp 
                ${CMAKE_CURRENT_LIST_DIR}/src/VDPPartition.cpp
-               ${CMAKE_CURRENT_LIST_DIR}/src/LineSegmentPartition.cpp)
+               ${CMAKE_CURRENT_LIST_DIR}/src/LineSegmentPartition.cpp
+               ${CMAKE_CURRENT_LIST_DIR}/src/Tree.cpp
+               ${CMAKE_CURRENT_LIST_DIR}/src/TreeElement.cpp
+               ${CMAKE_CURRENT_LIST_DIR}/src/TreeElementData.cpp)
                #${CMAKE_CURRENT_LIST_DIR}/src/PrintTree.cpp)
 
 
@@ -46,12 +48,10 @@ target_include_directories(advt
 	PUBLIC 
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 	PRIVATE
-		oppt
-		opptTree
+		oppt		
 		CGAL)
 target_link_libraries(advt PUBLIC 
-                      oppt 
-                      OpptTree
+                      oppt
                       CGAL)
 target_compile_features(advt PUBLIC cxx_std_11)
 set_target_properties(advt

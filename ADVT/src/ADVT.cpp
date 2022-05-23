@@ -135,8 +135,9 @@ FloatType ADVT::search(TreeElement *currentBelief, RobotStateSharedPtr &state, i
 		requireHeuristic = true;
 	}
 
-	if (depth == options->maximumDepth)
+	if (depth == options->maximumDepth) {
 		requireHeuristic = true;
+	}
 
 	if (requireHeuristic) {
 		std::shared_ptr<HeuristicInfo> heuristicInfo(new HeuristicInfo);

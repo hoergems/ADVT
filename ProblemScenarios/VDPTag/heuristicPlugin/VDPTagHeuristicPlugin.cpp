@@ -15,7 +15,8 @@ public:
     virtual ~VDPTagHeuristicPlugin() = default;
 
     virtual bool load(const std::string& optionsFile) override {
-        actionDistr_ = std::make_unique<std::uniform_real_distribution<FloatType>>(0.0, 2.0 * M_PI);       
+        actionDistr_ = std::make_unique<std::uniform_real_distribution<FloatType>>(0.0, 2.0 * M_PI); 
+        actionDistr2_ = std::make_unique<std::bernoulli_distribution>(0.5);      
         return true;
     }
 
@@ -55,10 +56,14 @@ private:
 
     std::unique_ptr<std::uniform_real_distribution<FloatType>> actionDistr_ = nullptr;
 
+    std::unique_ptr<std::bernoulli_distribution> actionDistr2_ = nullptr;
+
 private:
     VectorFloat randomAction() const {
         auto randomEngine = robotEnvironment_->getRobot()->getRandomEngine().get();
-        VectorFloat randomAction({(*(actionDistr_.get()))(*randomEngine), 0.0});
+        FloatType look = (*(actionDistr2_.get()))(*randomEngine) ? 1.0 : 0.0;
+        //bool look = (*(actionDistr2_.get()))(*(randomEngine.get()));
+        VectorFloat randomAction({(*(actionDistr_.get()))(*randomEngine), look});
         return randomAction;
     }
 };

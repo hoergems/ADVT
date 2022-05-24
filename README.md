@@ -15,11 +15,12 @@ The code consists of two parts: The `ADVT` folder contains the implementation of
 
 # Getting started
 #### Dependencies
-To build and run ADVT on the provided problem scenarios, the following dependencies have to be installed: 
+To build and run ADVT on the provided problem scenarios, the following dependencies have to be installed:
 
+- Ubuntu 20.04
 - C++ standard 11 or higher
 - OPPT: https://github.com/RDLLab/oppt (Installation instructions are provided in the repository)
-- CGAL version 5.4 or higher: https://www.cgal.org/. (Installation: [Linux](https://www.cgal.org/download/linux.html), [Mac](https://www.cgal.org/download/macosx.html))
+- CGAL version 5.4 or higher: https://www.cgal.org/. (Installation: [Linux](https://www.cgal.org/download/linux.html))
 
 #### Compiling ADVT
 To compile ADVT, navigate to the ADVT folder an execute

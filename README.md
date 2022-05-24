@@ -19,7 +19,7 @@ To build and run ADVT on the provided problem scenarios, the following dependenc
 
 - C++ standard 11 or higher
 - OPPT: https://github.com/RDLLab/oppt
-- CGAL version 5.4 or higher: https://www.cgal.org/. (Installation: [Linux](https://www.cgal.org/download/macosx.html), [Mac](https://www.cgal.org/download/macosx.html))
+- CGAL version 5.4 or higher: https://www.cgal.org/. (Installation: [Linux](https://www.cgal.org/download/linux.html), [Mac](https://www.cgal.org/download/macosx.html))
 
 #### Compiling ADVT
 To compile ADVT, navigate to the ADVT folder an execute

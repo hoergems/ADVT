@@ -50,3 +50,5 @@ After configuring the OPPT environment as described above, navigate to the `ADVT
 
 	./advt --cfg <ADVT_INSTALL>/ProblemScenarios/cfg/<ProblemScenario>.cfg
 where `<ADVT_INSTALL>` is the folder the repository was cloned into and `<ProblemScenario>` is the configuration file for a specific problem scenario (see `ProblemScenarios/cfg`).
+
+After running ADVT on a problem scenario, a log file is generated in the `ADVT/bin/log` directory which contains a summary of the simulation run.

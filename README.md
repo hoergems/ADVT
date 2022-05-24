@@ -29,7 +29,7 @@ To compile ADVT, navigate to the ADVT folder an execute
 	make
 After ADVT has been successfully build, the `advt` executable can be found inside the `ADVT/bin` folder.
 
-### Compiling the problem scenarios
+#### Compiling the problem scenarios
 To compile the problem scenarios, navigate to the `ProblemScenarios` folder and execute
 
 	mkdir build && cd build

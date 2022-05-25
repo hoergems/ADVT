@@ -9,9 +9,8 @@ public:
 
 	FloatType dist = 0.0;
 
-	FloatType numScans = 0.0;
+	int activeBeam = 0;
 
-	FloatType timeSinceLastScan = 0.0;
 };
 }
 

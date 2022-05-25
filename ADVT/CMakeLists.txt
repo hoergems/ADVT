@@ -5,7 +5,8 @@ if (NOT CMAKE_BUILD_TYPE)
    set(CMAKE_BUILD_TYPE RelWithDebInfo) 
 endif()
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+#set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+set(CMAKE_CXX_FLAGS_RELEASE "-fPIC -O3 -msse2 -mfpmath=sse -DEIGEN_NO_DEBUG -std=c++11")
 
 include(GNUInstallDirs)
 if(DEFINED ENV{OPPT_SEARCH_PATH})

@@ -4,6 +4,7 @@
 #include "VDPTagTransitionPluginOptions.hpp"
 #include "VDPTagUserData.hpp"
 #include "VDPTagDynamics.hpp"
+#include "Utils.hpp"
 
 namespace oppt
 {
@@ -63,13 +64,10 @@ public :
         Vector2f nextTargetPos =
             computeTargetPosDeterministic(currentState->as<VDPTagState>()->targetPos(), numIntegrationSteps_, mu_, dt_, dtHalf_, dtDiv6_) +
             posStd_ * Vector2f((*(normalDistr_.get()))(*randomEngine), (*(normalDistr_.get()))(*randomEngine));
-
-        Vector2f unit;
-        unit.x() = 1.0;
-        unit.y() = 0.0;
+        
         Vector2f nextAgentPos =
             barrierStop(currentState->as<VDPTagState>()->agentPos(),
-                        speed * stepSize_ * rotate(unit, actionVec[0]),
+                        speed * stepSize_ * rotate(Vector2f(1, 0), actionVec[0]),
                         cardinals_);
         PropagationResultSharedPtr propRes(new PropagationResult);
         propRes->nextState =
@@ -77,13 +75,8 @@ public :
 
         OpptUserDataSharedPtr ud(new VDPTagUserData);
         ud->as<VDPTagUserData>()->dist = (nextTargetPos - nextAgentPos).norm();
-        ud->as<VDPTagUserData>()->numScans = currentState->getUserData()->as<VDPTagUserData>()->numScans;
-        if (actionVec[1] > 0.5) {
-            ud->as<VDPTagUserData>()->numScans += 1.0;
-            ud->as<VDPTagUserData>()->timeSinceLastScan = 0.0;
-        } else {
-            ud->as<VDPTagUserData>()->timeSinceLastScan += 1.0;
-        }
+        ud->as<VDPTagUserData>()->activeBeam = activeBeam(nextTargetPos - nextAgentPos);
+        
         propRes->nextState->setUserData(ud);
         propRes->action = propagationRequest->action;
         if (robotEnvironment_->isExecutionEnvironment() or

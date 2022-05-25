@@ -26,10 +26,11 @@ public:
 
         ActionSharedPtr act;
         FloatType reward = 0.0;
-        auto currentState = heuristicInfo->currentState;
+        auto currentState = heuristicInfo->currentState->as<VDPTagState>()->makeCopy();
         FloatType currentDiscount = 1.0;
         FloatType totalDiscountedReward = 0.0;
-        for (size_t i = 0; i != numRolloutSteps; ++i) {
+        int steps = numRolloutSteps - heuristicInfo->currentStep;
+        for (size_t i = 0; i != steps; ++i) {
             propReq->currentState = currentState;
             act = ActionSharedPtr(new VectorAction(randomAction()));
             propReq->action = act.get();
@@ -52,7 +53,7 @@ public:
 private:
     FloatType discountFactor_ = 0.95;
 
-    int numRolloutSteps = 9;
+    int numRolloutSteps = 10;
 
     std::unique_ptr<std::uniform_real_distribution<FloatType>> actionDistr_ = nullptr;
 

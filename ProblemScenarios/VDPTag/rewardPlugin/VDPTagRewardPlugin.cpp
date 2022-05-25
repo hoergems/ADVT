@@ -18,11 +18,8 @@ public :
     }
 
     virtual FloatType getReward(const PropagationResultSharedPtr& propagationResult) const override {
-        FloatType dist =
-            (propagationResult->nextState->as<VDPTagState>()->targetPos() - propagationResult->nextState->as<VDPTagState>()->agentPos()).norm();
-
         FloatType reward = 0.0;
-        if (dist < tagRadius_) {
+        if (propagationResult->nextState->getUserData()->as<VDPTagUserData>()->dist <= tagRadius_) {
             reward = tagReward_;
         } else {
             reward = -stepCost_;

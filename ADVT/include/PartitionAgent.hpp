@@ -51,7 +51,7 @@ private:
 
 	std::unique_ptr<Tree> partitionNodeTree_ = nullptr;
 
-	Tree *partitionTree_ = nullptr;
+	TreeElementPtr rootPartition_ = nullptr;
 
 	std::vector<ActionUniquePtr> allActions_;
 

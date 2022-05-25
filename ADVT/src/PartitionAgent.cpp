@@ -23,14 +23,14 @@ PartitionAgent::PartitionAgent(RobotEnvironment *robotEnvironment,
 }
 
 PartitionAgent::~PartitionAgent() {
-	if (partitionTree_ != nullptr)
-		delete partitionTree_;
+	//if (partitionTree_ != nullptr)
+	//	delete partitionTree_;
 }
 
 void PartitionAgent::initPartitionTree_(const VectorFloat *lowerActionBound, const VectorFloat *upperActionBound) {
 	const ADVTOptions * advtOptions = static_cast<const ADVTOptions *>(options_);
 	partitionNodeTree_ = std::unique_ptr<Tree>(new Tree);
-	partitionTree_ = new Tree;
+	//partitionTree_ = new Tree;
 	partitionNodeTree_->initRoot<PartitionNode>();
 	auto root = partitionNodeTree_->getRoot()->as<PartitionNode>();
 	root->setDepth(0.0);
@@ -49,13 +49,13 @@ void PartitionAgent::initPartitionTree_(const VectorFloat *lowerActionBound, con
 	std::shared_ptr<Action> randomAction = nullptr;
 	//std::shared_ptr<Action> randomAction(new VectorAction(VectorFloat(lowerActionBound->size(), 0.0)));
 
-	TreeElementPtr initPartition = nullptr;
+	rootPartition_ = nullptr;
 	if (advtOptions->partitioningMode == "RECTANGLE") {
 		randomAction = std::shared_ptr<Action>(new VectorAction(randomActionVec));
-		initPartition = TreeElementPtr(new RectanglePartition(nullptr, randomAction, *lowerActionBound, *upperActionBound, advtOptions));
+		rootPartition_ = TreeElementPtr(new RectanglePartition(nullptr, randomAction, *lowerActionBound, *upperActionBound, advtOptions));
 	} else if (advtOptions->partitioningMode == "VORONOI") {
 		randomAction = std::shared_ptr<Action>(new VectorAction(randomActionVec));
-		initPartition = TreeElementPtr(new VoronoiPartition(randomAction,
+		rootPartition_ = TreeElementPtr(new VoronoiPartition(randomAction,
 		                               nullptr,
 		                               lowerActionBound,
 		                               upperActionBound,
@@ -65,13 +65,13 @@ void PartitionAgent::initPartitionTree_(const VectorFloat *lowerActionBound, con
 		rootDiameter_ = 2.0 * M_PI;
 		randomActionVec[1] = randomActionVec[1] > 0.5 ? 1.0 : 0.0;
 		randomAction = std::shared_ptr<Action>(new VectorAction(randomActionVec));
-		initPartition = TreeElementPtr(new VDPPartition(randomAction,
+		rootPartition_ = TreeElementPtr(new VDPPartition(randomAction,
 		                               nullptr,
 		                               advtOptions));
 	} else if (advtOptions->partitioningMode == "LINE_SEGMENT") {
 		rootDiameter_ = (*upperActionBound)[0] - (*lowerActionBound)[0];
 		randomAction = std::shared_ptr<Action>(new VectorAction(randomActionVec));
-		initPartition = TreeElementPtr(new LineSegmentPartition(randomAction,
+		rootPartition_ = TreeElementPtr(new LineSegmentPartition(randomAction,
 		                               nullptr,
 		                               (*lowerActionBound)[0],
 		                               (*upperActionBound)[0],
@@ -80,9 +80,9 @@ void PartitionAgent::initPartitionTree_(const VectorFloat *lowerActionBound, con
 		ERROR("Invalid partitioningMode. Valid options are 'RECTANGLE', 'VORONOI', 'VDP' and 'LINE_SEGMENT'");
 	}
 
-	TreeElement *initPartitionPtr = initPartition.get();
+	TreeElement *initPartitionPtr = rootPartition_.get();
 	initPartitionPtr->as<Partition>()->diameter_ = rootDiameter_;
-	partitionTree_->updateRoot(std::move(initPartition));
+	//partitionTree_->updateRoot(std::move(rootPartition_));
 
 	root->setPartition(initPartitionPtr);
 
@@ -120,8 +120,7 @@ void PartitionAgent::print() {
 		FloatType diam = partition->as<Partition>()->getDiameter(diameterEstimator_, distanceMeasure_, randomEngine) / rootDiameter_;
 		if (action) {
 			cout << "a: " << *(action) << ", meanQ: " << leafNode->getAverageReward() << ", numVisits: " << numVisits;
-			cout << ", depth: " << leafNode->getDepth() << ", diameter=" << diam <<
-			     ", l=" << splitExplorationFactor * numVisits << ", r=" << 1.0 / (diam * diam) << endl;
+			cout << ", depth: " << leafNode->getDepth() << ", diameter=" << diam << endl;
 		} else {
 			cout << "a: NONE" << ", meanQ: " << leafNode->getAverageReward() << ", numVisits: " <<
 			     leafNode->getNumVisits() << endl;

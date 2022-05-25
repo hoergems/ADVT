@@ -2,6 +2,7 @@
 #define _VDPTag_STATE_HPP_
 #include <oppt/opptCore/core.hpp>
 #include <oppt/robotHeaders/RobotState.hpp>
+#include "VDPTagUserData.hpp"
 
 namespace oppt {
 class VDPTagState: public VectorState {
@@ -18,6 +19,17 @@ public:
 	agentPos_(agentPos),
 	targetPos_(targetPos) {
 
+	}
+
+	RobotStateSharedPtr makeCopy() const {
+		RobotStateSharedPtr copied(new VDPTagState(state_));
+		auto ud = getUserData()->as<VDPTagUserData>();
+
+		OpptUserDataSharedPtr udNew(new VDPTagUserData);
+		udNew->as<VDPTagUserData>()->dist = ud->as<VDPTagUserData>()->dist;
+		udNew->as<VDPTagUserData>()->activeBeam = ud->as<VDPTagUserData>()->activeBeam;
+		copied->setUserData(udNew);
+		return copied;
 	}
 
 	Vector2f agentPos() const {

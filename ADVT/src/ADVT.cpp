@@ -45,8 +45,8 @@ void ADVT::setup() {
 	observationComparator_ = [maxObservationDistance](const Observation * observation, TreeElement * treeElement) {
 		auto it = treeElement->getChildren();
 		unsigned int numChildren = treeElement->getNumChildren();
-		unsigned int idx = 0;
-		FloatType smallestDistance = maxObservationDistance;
+		unsigned int idx = 0;		
+		FloatType smallestDistance = maxObservationDistance;		
 		TreeElement *closestObservationEdge = nullptr;
 		while (true) {
 			idx++;

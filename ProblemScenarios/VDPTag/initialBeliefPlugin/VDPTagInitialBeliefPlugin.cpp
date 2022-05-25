@@ -23,6 +23,7 @@ public:
         VectorFloat stateVec({0.0, 0.0, (*(targetDistr_.get()))(*randomEngine), (*(targetDistr_.get()))(*randomEngine)});
         RobotStateSharedPtr initState(new VDPTagState(stateVec));
         OpptUserDataSharedPtr ud(new VDPTagUserData);
+        ud->as<VDPTagUserData>()->dist = (initState->as<VDPTagState>()->targetPos() - initState->as<VDPTagState>()->agentPos()).norm();
         initState->setUserData(ud);
         return initState;
     }

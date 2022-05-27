@@ -68,7 +68,7 @@ void ADVT::setup() {
 	propReq_ = PropagationRequestSharedPtr(new PropagationRequest);
 	propRes_ = PropagationResultSharedPtr(new PropagationResult);
 	obsReq_ = ObservationRequestSharedPtr(new ObservationRequest);
-
+	propReq_->userData = OpptUserDataSharedPtr(new OpptUserData);
 }
 
 void ADVT::checkOptions_() {
@@ -142,6 +142,7 @@ FloatType ADVT::search(TreeElement *currentBelief, RobotStateSharedPtr &state, i
 	if (requireHeuristic) {
 		std::shared_ptr<HeuristicInfo> heuristicInfo(new HeuristicInfo);
 		heuristicInfo->currentState = state;
+		heuristicInfo->currentStep = depth;
 		heuristicInfo->discountFactor = problemEnvironmentOptions_->discountFactor;
 		return heuristicPlugin_->getHeuristicValue(heuristicInfo.get());
 	}
@@ -156,7 +157,7 @@ FloatType ADVT::search(TreeElement *currentBelief, RobotStateSharedPtr &state, i
 
 	// Sample next state
 	propReq_->currentState = state;
-	propReq_->action = action;
+	propReq_->action = action;	
 	propRes_ = robotPlanningEnvironment_->getRobot()->propagateState(propReq_);
 
 	// Sample observation

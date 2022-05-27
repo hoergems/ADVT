@@ -29,15 +29,11 @@ public :
 
     virtual bool load(const std::string& optionsFile) override {
         parseOptions_<VDPTagTransitionPluginOptions>(optionsFile);
-        Vector2f c1(1.0, 0.0);
-        Vector2f c2(0.0, 1.0);
-        Vector2f c3(-1.0, 0.0);
-        Vector2f c4(0.0, -1.0);
-
-        cardinals_.push_back(c1);
-        cardinals_.push_back(c2);
-        cardinals_.push_back(c3);
-        cardinals_.push_back(c4);
+        
+        cardinals_.push_back(Vector2f(1, 0));
+        cardinals_.push_back(Vector2f(0, 1));
+        cardinals_.push_back(Vector2f(-1, 0));
+        cardinals_.push_back(Vector2f(0, -1));
 
         numIntegrationSteps_ = int(round(stepSize_ / dt_));
 
@@ -56,19 +52,23 @@ public :
     virtual PropagationResultSharedPtr propagateState(const PropagationRequest* propagationRequest) const override {
         auto currentState = propagationRequest->currentState;
         auto randomEngine = robotEnvironment_->getRobot()->getRandomEngine().get();
-        VectorFloat currentStateVec = currentState->as<VectorState>()->asVector();
-        VectorFloat actionVec = propagationRequest->action->as<VectorAction>()->asVector();
-
-        Vector2f delta(speed * stepSize_ * cos(actionVec[0]), speed * stepSize_ * sin(actionVec[0]));
+        auto actionVec = propagationRequest->action->as<VectorAction>()->asVector();
 
         Vector2f nextTargetPos =
-            computeTargetPosDeterministic(currentState->as<VDPTagState>()->targetPos(), numIntegrationSteps_, mu_, dt_, dtHalf_, dtDiv6_) +
+            computeTargetPosDeterministic(currentState->as<VDPTagState>()->targetPos(),
+                                          numIntegrationSteps_,
+                                          mu_,
+                                          dt_,
+                                          dtHalf_,
+                                          dtDiv6_) +
             posStd_ * Vector2f((*(normalDistr_.get()))(*randomEngine), (*(normalDistr_.get()))(*randomEngine));
-        
+
         Vector2f nextAgentPos =
             barrierStop(currentState->as<VDPTagState>()->agentPos(),
-                        speed * stepSize_ * rotate(Vector2f(1, 0), actionVec[0]),
+                        speed_ * stepSize_ * rotate(Vector2f(1, 0),
+                                propagationRequest->action->as<VectorAction>()->asVector()[0]),
                         cardinals_);
+
         PropagationResultSharedPtr propRes(new PropagationResult);
         propRes->nextState =
             RobotStateSharedPtr(new VDPTagState(nextAgentPos, nextTargetPos));
@@ -76,11 +76,12 @@ public :
         OpptUserDataSharedPtr ud(new VDPTagUserData);
         ud->as<VDPTagUserData>()->dist = (nextTargetPos - nextAgentPos).norm();
         ud->as<VDPTagUserData>()->activeBeam = activeBeam(nextTargetPos - nextAgentPos);
-        
+
         propRes->nextState->setUserData(ud);
         propRes->action = propagationRequest->action;
         if (robotEnvironment_->isExecutionEnvironment() or
-                (static_cast<const VDPTagTransitionPluginOptions *>(options_.get())->particlePlotLimit > 0)) {
+                (static_cast<const VDPTagTransitionPluginOptions *>(options_.get())->particlePlotLimit > 0 and
+                 propagationRequest->userData == nullptr)) {
             geometric::Pose agentPose(propRes->nextState->as<VDPTagState>()->agentPos()[0],
                                       propRes->nextState->as<VDPTagState>()->agentPos()[1],
                                       0.0,
@@ -104,7 +105,7 @@ public :
 private:
     FloatType mu_ = 2.0;
 
-    FloatType speed = 1.0;
+    FloatType speed_ = 1.0;
 
     FloatType dt_ = 0.1;
 
@@ -118,7 +119,7 @@ private:
 
     int numIntegrationSteps_ = 0;
 
-    std::vector<Vector2f> cardinals_;    
+    std::vector<Vector2f> cardinals_;
 
     std::unique_ptr<std::normal_distribution<FloatType>> normalDistr_;
 
@@ -150,12 +151,11 @@ private:
     }
 
     Vector2f rotate(const Vector2f &vec, const FloatType &angle) const {
-        float sinn = sin(angle);
-        float coss = cos(angle);
-
+        float c = cosf(angle);
+        float s = sinf(angle);
         Vector2f rotated;
-        rotated.x() = (coss * vec.x()) - (sinn * vec.y());
-        rotated.y() = (sinn * vec.x()) + (coss * vec.y());
+        rotated.x() = vec.x() * c - vec.y() * s;
+        rotated.y() = vec.x() * s + vec.y() * c;
         return rotated;
     }
 };

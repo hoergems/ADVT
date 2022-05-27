@@ -3,10 +3,11 @@ project(ProblemScenarios)
 
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -std=c++11")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Og -std=c++11")
-set(CMAKE_CXX_FLAGS_RELEASE "-fPIC -O3 -msse2 -mfpmath=sse -DEIGEN_NO_DEBUG -std=c++11")
+#set(CMAKE_CXX_FLAGS_RELEASE "-fPIC -O3 -msse2 -mfpmath=sse -DEIGEN_NO_DEBUG -std=c++11")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -msse2 -mfpmath=sse -DEIGEN_NO_DEBUG")
 
 if (NOT CMAKE_BUILD_TYPE)
-   set(CMAKE_BUILD_TYPE RelWithDebInfo) 
+   set(CMAKE_BUILD_TYPE Release) 
 endif()
 
 string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)

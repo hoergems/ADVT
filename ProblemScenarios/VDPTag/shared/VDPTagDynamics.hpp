@@ -37,7 +37,7 @@ Vector2f computeTargetPosDeterministic(const Vector2f &currentTargetPos,
 }
 
 // Agent movement
-bool get_line_intersection(FloatType p0_x, FloatType p0_y, FloatType p1_x, FloatType p1_y,
+/**bool get_line_intersection(FloatType p0_x, FloatType p0_y, FloatType p1_x, FloatType p1_y,
                            FloatType p2_x, FloatType p2_y, FloatType p3_x, FloatType p3_y, Vector2f &interesection) {
 	FloatType s1_x, s1_y, s2_x, s2_y;
 	s1_x = p1_x - p0_x;     s1_y = p1_y - p0_y;
@@ -56,7 +56,7 @@ bool get_line_intersection(FloatType p0_x, FloatType p0_y, FloatType p1_x, Float
 	}
 
 	return false; // No collision
-}
+}*/
 
 FloatType cross(const Vector2f &a, const Vector2f &b) {
 	return a.x() * b.y() - b.x() * a.y();

@@ -128,7 +128,7 @@ private:
         //return 0.0;
         FloatType heuristic = 0.0;
         //FloatType df = 0.1;
-        FloatType df = 0.01;
+        FloatType df = 0.001;
         //FloatType discountPower = std::pow(discountFactor_, distToGoal);
         FloatType discountPower = std::pow(df, distToGoal);
         heuristic -= stepPenalty_ * (discountPower - 1.0) / std::log(df);

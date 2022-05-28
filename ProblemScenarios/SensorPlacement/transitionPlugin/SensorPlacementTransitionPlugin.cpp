@@ -134,7 +134,7 @@ private:
         userData->as<SensorPlacementUserData>()->eeTouchesWall = false;
         userData->as<SensorPlacementUserData>()->eePose = geometric::Pose(eeLink_->WorldPose());
 
-        if (std::fabs(goalPosition_[0] - eeLink_->WorldPose().Pos().X()) < 0.1)
+        if (std::fabs(goalPosition_[0] - eeLink_->WorldPose().Pos().X()) < 0.15)
             userData->as<SensorPlacementUserData>()->eeTouchesWall = true;
         if (eeLink_->WorldPose().Pos().X() > goalPosition_[0] + 0.1)        
             userData->as<SensorPlacementUserData>()->collides = true;

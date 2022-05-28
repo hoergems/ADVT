@@ -28,6 +28,7 @@ public:
     }
 
     virtual FloatType getHeuristicValue(const HeuristicInfo* heuristicInfo) const override {
+        //return 0.0;
         auto randomEngine = robotEnvironment_->getRobot()->getRandomEngine();
         ActionSharedPtr act;
         FloatType reward = 0.0;
@@ -35,7 +36,7 @@ public:
         FloatType totalDiscountedReward = 0.0;
         int steps = numRolloutSteps_ - heuristicInfo->currentStep;
         auto agentPos = heuristicInfo->currentState->as<VDPTagState>()->agentPos();
-        auto targetPos = heuristicInfo->currentState->as<VDPTagState>()->targetPos();        
+        auto targetPos = heuristicInfo->currentState->as<VDPTagState>()->targetPos();
         for (size_t i = 0; i != steps; ++i) {
             auto action = randomAction();
             agentPos = barrierStop(agentPos,
@@ -49,7 +50,7 @@ public:
                         dtDiv6_) +
                         posStd_ * Vector2f((*(normalDistr_.get()))(*randomEngine), (*(normalDistr_.get()))(*randomEngine));
             auto dist = (targetPos - agentPos).norm();
-            if (dist <= 0.01) {
+            if (dist <= 0.1) {                
                 reward = 100.0;
             } else {
                 reward = -1.0;

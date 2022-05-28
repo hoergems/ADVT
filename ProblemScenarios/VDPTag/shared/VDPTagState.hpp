@@ -49,7 +49,9 @@ public:
 	}
 
 	virtual void print(std::ostream& os) const override {
-		os << "Agent: (" << agentPos_[0] << ", " << agentPos_[1] << "), Target: (" << targetPos_[0] << ", " << targetPos_[1] << ")";
+		os << "Agent: (" << agentPos_[0] << ", " << agentPos_[1] 
+		<< "), Target: (" << targetPos_[0] << ", " << targetPos_[1] 
+		<< "), dist: " << (targetPos_ - agentPos_).norm();
 	}
 
 private:

@@ -28,7 +28,7 @@ public :
         FloatType reward = -stepPenalty;
         if (ud->insideGoalArea)
             reward += exitReward;
-        if (propagationResult->collisionReport->collides)
+        if (ud->collides)
             reward -= collisionPenalty;
         return reward;                   
         

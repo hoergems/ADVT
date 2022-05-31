@@ -2,6 +2,7 @@
 #include <oppt/gazeboInterface/GazeboInterface.hpp>
 #include <oppt/opptCore/geometric/Sphere.hpp>
 #include <oppt/opptCore/geometric/Box.hpp>
+#include <oppt/opptCore/CollisionRequest.hpp>
 #include "ParkingTransitionPluginOptions.hpp"
 #include "VehicleState.hpp"
 #include "VehicleUserData.hpp"
@@ -19,9 +20,9 @@ public:
     FloatType minZ = 0.0;
     FloatType maxZ = 0.0;
 
-    bool insideTile(const VectorFloat &vehiclePosition) const {
-        if (vehiclePosition[0] <= maxX and vehiclePosition[0] >= minX and
-                vehiclePosition[1] <= maxY and vehiclePosition[1] >= minY) {
+    bool insideTile(const float &x, const float &y) const {
+        if (x <= maxX and x >= minX and
+                y <= maxY and y >= minY) {
             return true;
         }
 
@@ -61,17 +62,17 @@ public :
     virtual PropagationResultSharedPtr propagateState(const PropagationRequest* propagationRequest) const override {
         auto randomEngine = robotEnvironment_->getRobot()->getRandomEngine().get();
         CollisionReportSharedPtr collisionReport = nullptr;
-
         VehicleState *currentState = propagationRequest->currentState->as<VehicleState>();
         RobotStateSharedPtr nextState(new VehicleState(currentState->asVector()));
         auto nextVehicleState = nextState->as<VehicleState>();
-
         VectorFloat actionVec = propagationRequest->action->as<VectorAction>()->asVector();
         actionVec[0] += (*(velocityErrorDistribution_.get()))(*randomEngine);
         actionVec[1] += (*(yawErrorDistribution_.get()))(*randomEngine);
         if (actionVec.size() != 2)
             actionVec[2] += (*(elevationErrorDistribution_.get()))(*randomEngine);
 
+        bool collides = false;
+        geometric::Pose nextVehiclePose;
         for (size_t i = 0; i != numIntegrationSteps; ++i) {
             nextVehicleState->x() = nextVehicleState->x() + controlDurationStep_ * nextVehicleState->velocity() * cos(nextVehicleState->yaw());
             nextVehicleState->y() = nextVehicleState->y() + controlDurationStep_ * nextVehicleState->velocity() * sin(nextVehicleState->yaw());
@@ -83,26 +84,29 @@ public :
                     nextVehicleState->z() = -5.0;
                 }
             }
+
             nextVehicleState->yaw() = math::wrapAngle(nextVehicleState->yaw() + controlDurationStep_ * actionVec[1]);
             nextVehicleState->velocity() = nextVehicleState->velocity() + controlDurationStep_ * actionVec[0];
-
-            geometric::Pose nextVehiclePose(nextVehicleState->x(),
-                                            nextVehicleState->y(),
-                                            nextVehicleState->z(),
-                                            0.0,
-                                            0.0,
-                                            nextVehicleState->yaw());
-
-            vehicleLink_->SetWorldPose(nextVehiclePose.toGZPose());
-            collisionReport = robotEnvironment_->getRobot()->makeDiscreteCollisionReportDirty();
-            if (collisionReport->collides)
+            nextVehiclePose = geometric::Pose(nextVehicleState->x(),
+                                              nextVehicleState->y(),
+                                              nextVehicleState->z(),
+                                              0.0,
+                                              0.0,
+                                              nextVehicleState->yaw());
+            if (collides_(nextVehiclePose)) {
+                collides = true;
                 break;
+            }
+        }
+
+        if (robotEnvironment_->isExecutionEnvironment()) {
+            vehicleLink_->SetWorldPose(nextVehiclePose.toGZPose());
         }
 
         PropagationResultSharedPtr propRes(new PropagationResult);
         propRes->nextState = nextState;
         propRes->nextState->setGazeboWorldState(robotEnvironment_->getGazeboInterface()->getWorldState(true));
-        propRes->nextState->setUserData(makeUserData(nextVehicleState, actionVec, collisionReport->collides));
+        propRes->nextState->setUserData(makeUserData(nextVehicleState, actionVec, collides));
         propRes->collisionReport = collisionReport;
         return propRes;
     }
@@ -118,7 +122,9 @@ private:
 
     gazebo::physics::Link* vehicleLink_ = nullptr;
 
-    VectorFloat goalAreaPosition_;
+    Vector2f goalAreaPosition2D_;
+
+    Vector3f goalAreaPosition3D_;
 
     FloatType goalAreaRadius_ = 1.0;
 
@@ -129,6 +135,25 @@ private:
     std::vector<Tile> tiles_;
 
 private:
+    bool collides_(const geometric::Pose &pose) const {
+        auto robotCollisionObject =
+            robotEnvironment_->getScene()->getRobotCollisionObjects()[0]->getFCLCollisionObject();
+        fcl::Quaternion3f fclQuat(pose.orientation.w(),
+                                  pose.orientation.x(),
+                                  pose.orientation.y(),
+                                  pose.orientation.z());
+        fcl::Vec3f translationVector(pose.position.x(),
+                                     pose.position.y(),
+                                     pose.position.z());
+        fcl::Transform3f trans(fclQuat, translationVector);
+        robotCollisionObject->setTransform(trans);
+        robotCollisionObject->computeAABB();
+        CollisionRequest collisionRequest;
+        collisionRequest.enableContact = false;
+        return robotEnvironment_->getScene()->makeDiscreteCollisionReport(&collisionRequest)->collides;
+    }
+
+
     void makeTiles() {
         VectorString tileNames({"Tile_1::link", "Tile_2::link", "Tile_3::link"});
         for (auto &tileName : tileNames) {
@@ -172,20 +197,21 @@ private:
     }
 
 
-    RobotStateUserDataSharedPtr makeUserData(const VehicleState *nextState, 
-        const VectorFloat &action, 
-        const bool &collides) const {
+    RobotStateUserDataSharedPtr makeUserData(const VehicleState *nextState,
+            const VectorFloat &action,
+            const bool &collides) const {
         RobotStateUserDataSharedPtr userData(new VehicleUserData);
-        auto ud = userData->as<VehicleUserData>(); 
-        VectorFloat pos({nextState->x(), nextState->y(), nextState->z()});       
-        if (action.size() == 3) {            
-            ud->insideGoalArea = math::euclideanDistance(pos, goalAreaPosition_) <= goalAreaRadius_ ? true : false;
+        auto ud = userData->as<VehicleUserData>();
+        if (action.size() == 3) {
+            ud->insideGoalArea =
+                (goalAreaPosition3D_ - Vector3f(nextState->x(), nextState->y(), nextState->z())).norm()
+                <= goalAreaRadius_ ? true : false;
         } else {
-            VectorFloat pos2D({nextState->x(), nextState->y()});
-            ud->insideGoalArea = math::euclideanDistance(pos2D, VectorFloat({goalAreaPosition_[0], goalAreaPosition_[1]})) <= goalAreaRadius_ ? true : false;
+            ud->insideGoalArea =
+                (goalAreaPosition2D_ - Vector2f(nextState->x(), nextState->y())).norm() <= goalAreaRadius_ ? true : false;
         }
         for (int i = 0; i != tiles_.size(); ++i) {
-            if (tiles_[i].insideTile(pos)) {
+            if (tiles_[i].insideTile(nextState->x(), nextState->y())) {
                 ud->aboveTile = i + 1;
                 break;
             }
@@ -218,7 +244,8 @@ private:
         if (!goalAreaLink)
             ERROR("GoalArea link could not be found");
         auto goalAreaPose = goalAreaLink->GetModel()->WorldPose();
-        goalAreaPosition_ = VectorFloat({goalAreaPose.Pos().X(), goalAreaPose.Pos().Y(), goalAreaPose.Pos().Z()});
+        goalAreaPosition2D_ = Vector2f(goalAreaPose.Pos().X(), goalAreaPose.Pos().Y());
+        goalAreaPosition3D_ = Vector3f(goalAreaPose.Pos().X(), goalAreaPose.Pos().Y(), goalAreaPose.Pos().Z());
 
         auto bodies = robotEnvironment_->getScene()->getBodies();
         bool goalSphereFound = false;

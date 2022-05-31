@@ -45,20 +45,20 @@ public:
     }
 
     static void addADVTOptions(options::OptionParser* parser) {
-        parser->addOption<unsigned int>("HOOT", "numEpisodes", &ADVTOptions::numEpisodes);
-        parser->addOption<unsigned int>("HOOT", "minParticleCount", &ADVTOptions::minParticleCount);
-        parser->addOption<FloatType>("HOOT", "maxObservationDistance", &ADVTOptions::maxObservationDistance);
-        parser->addOption<FloatType>("HOOT", "explorationFactor", &ADVTOptions::explorationFactor);
-        parser->addOption<FloatType>("HOOT", "explorationFactorDiameter", &ADVTOptions::explorationFactorDiameter);        
-        parser->addOption<FloatType>("HOOT", "splitExplorationFactor", &ADVTOptions::splitExplorationFactor);
-        parser->addOption<FloatType>("HOOT", "minimumSplittingDiam", &ADVTOptions::minimumSplittingDiam);
-        parser->addOption<unsigned int>("HOOT", "numDiameterSamples", &ADVTOptions::numDiameterSamples);
-        parser->addOption<bool>("HOOT", "resetTree", &ADVTOptions::resetTree);
-        parser->addOptionWithDefault<unsigned int>("HOOT", "maximumDepth", &ADVTOptions::maximumDepth, 0);
-        parser->addOption<bool>("HOOT", "rejectionSampling", &ADVTOptions::rejectionSampling);
-        parser->addOptionWithDefault<bool>("HOOT", "bellmanBackup", &ADVTOptions::bellmanBackup, true);
-        parser->addOption<std::string>("HOOT", "partitioningMode", &ADVTOptions::partitioningMode);
-        parser->addOptionWithDefault<std::string>("HOOT", "distanceMeasure", &ADVTOptions::distanceMeasure, "euclidean");
+        parser->addOption<unsigned int>("ADVT", "numEpisodes", &ADVTOptions::numEpisodes);
+        parser->addOption<unsigned int>("ADVT", "minParticleCount", &ADVTOptions::minParticleCount);
+        parser->addOption<FloatType>("ADVT", "maxObservationDistance", &ADVTOptions::maxObservationDistance);
+        parser->addOption<FloatType>("ADVT", "explorationFactor", &ADVTOptions::explorationFactor);
+        parser->addOption<FloatType>("ADVT", "explorationFactorDiameter", &ADVTOptions::explorationFactorDiameter);        
+        parser->addOption<FloatType>("ADVT", "splitExplorationFactor", &ADVTOptions::splitExplorationFactor);
+        parser->addOption<FloatType>("ADVT", "minimumSplittingDiam", &ADVTOptions::minimumSplittingDiam);
+        parser->addOption<unsigned int>("ADVT", "numDiameterSamples", &ADVTOptions::numDiameterSamples);
+        parser->addOption<bool>("ADVT", "resetTree", &ADVTOptions::resetTree);
+        parser->addOptionWithDefault<unsigned int>("ADVT", "maximumDepth", &ADVTOptions::maximumDepth, 0);
+        parser->addOption<bool>("ADVT", "rejectionSampling", &ADVTOptions::rejectionSampling);
+        parser->addOptionWithDefault<bool>("ADVT", "bellmanBackup", &ADVTOptions::bellmanBackup, true);
+        parser->addOption<std::string>("ADVT", "partitioningMode", &ADVTOptions::partitioningMode);
+        parser->addOptionWithDefault<std::string>("ADVT", "distanceMeasure", &ADVTOptions::distanceMeasure, "euclidean");
     }
 };
 }

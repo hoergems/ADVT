@@ -99,9 +99,9 @@ public :
             }
         }
 
-        if (robotEnvironment_->isExecutionEnvironment()) {
+        //if (robotEnvironment_->isExecutionEnvironment()) {
             vehicleLink_->SetWorldPose(nextVehiclePose.toGZPose());
-        }
+        //}
 
         PropagationResultSharedPtr propRes(new PropagationResult);
         propRes->nextState = nextState;

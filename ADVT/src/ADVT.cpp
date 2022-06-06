@@ -5,6 +5,7 @@
 #include "BeliefNodeData.hpp"
 #include <oppt/robotHeaders/ActionSpaceDiscretizer.hpp>
 #include "BoundingSphere.hpp"
+#include "ParticleFilter.hpp"
 
 namespace oppt {
 extern ObservationComparator observationComparator;
@@ -64,7 +65,7 @@ void ADVT::setup() {
 		return closestObservationEdge;
 	};
 
-	particleFilter_ = std::make_unique<ParticleFilter>();
+	particleFilter_ = std::make_unique<ADVTFilter>();
 	propReq_ = PropagationRequestSharedPtr(new PropagationRequest);
 	propRes_ = PropagationResultSharedPtr(new PropagationResult);
 	obsReq_ = ObservationRequestSharedPtr(new ObservationRequest);
@@ -135,7 +136,7 @@ FloatType ADVT::search(TreeElement *currentBelief, RobotStateSharedPtr &state, i
 		requireHeuristic = true;
 	}
 
-	if (depth == options->maximumDepth) {
+	if (depth == options->maximumDepth) {		
 		requireHeuristic = true;
 	}
 
@@ -196,12 +197,10 @@ ActionSharedPtr ADVT::getNextAction() {
 		ERROR("Huh");
 
 	cout << "NUM OBSERVATIONS: " << actionEdge->getNumChildren() << endl;
-	//cout << "Tree depth: " << getSubtreeDepth(beliefTree_->getRoot(), 0) << endl;
 	cout << "Num actions: " << beliefTree_->getRoot()->getNumChildren() << endl;
 	cout << "Sampled " << numSampledEpisodes_ << " episodes" << endl;
 
 	ActionSharedPtr bestAction(new VectorAction(bestAct->as<VectorAction>()->asVector()));
-	//cout << "BEST ACTION: " << *(bestAction.get()) << endl;
 	return bestAction;
 }
 
@@ -209,21 +208,13 @@ bool ADVT::updateBelief(const ActionSharedPtr& action,
                         const ObservationSharedPtr& observation,
                         const bool &allowTerminalStates) {
 	auto options = static_cast<const ADVTOptions *>(problemEnvironmentOptions_);
-
 	VectorRobotStatePtr nextParticles;
 	cout << "allowTerminalStates: " << allowTerminalStates << endl;
 	if (options->rejectionSampling) {
 		PropagationRequestSharedPtr propagationRequest(new PropagationRequest);
 		ObservationRequestSharedPtr observationRequest(new ObservationRequest);
 		size_t numAttempts = 0;
-
-		auto childBelief = beliefTree_->getRoot()->as<BeliefNode>()->getOrCreateChild<BeliefNode>(action.get(), observation);
-		/**auto beliefData = childBelief->getData();
-		if (beliefData) {
-			nextParticles = childBelief->getData()->as<BeliefNodeData>()->getParticles();
-		} else {
-			LOGGING("Belief data is null");
-		}*/
+		
 		LOGGING("Num next particles " + std::to_string(nextParticles.size()));
 		while (nextParticles.size() < options->minParticleCount) {
 			auto state = beliefTree_->getRoot()->as<BeliefNode>()->sampleParticle();
@@ -257,20 +248,13 @@ bool ADVT::updateBelief(const ActionSharedPtr& action,
 				}
 				break;
 			}
-		}
-
-		/**if (nextParticles.size() < options->minParticleCount) {
-			while (nextParticles.size() != options->minParticleCount) {
-				propagationRequest->currentState = beliefTree_->getRoot()->as<BeliefNode>()->sampleParticle();
-				propagationRequest->action = action.get();
-				nextParticles.push_back(robotPlanningEnvironment_->getRobot()->propagateState(propagationRequest)->nextState);
-			}
-		}*/
+		}		
 	} else {
 		auto randomEngine = robotPlanningEnvironment_->getRobot()->getRandomEngine();
 		FilterRequestPtr filterRequest = std::make_unique<FilterRequest>();
 		filterRequest->robotEnvironment = robotPlanningEnvironment_;
 		filterRequest->allowZeroWeightParticles = false;
+		filterRequest->allowTerminalStates = allowTerminalStates;
 		filterRequest->numParticles = options->minParticleCount;
 		filterRequest->action = action.get();
 		filterRequest->observation = observation.get();
@@ -302,8 +286,6 @@ bool ADVT::updateBelief(const ActionSharedPtr& action,
 
 	newBelief->getData()->as<BeliefNodeData>()->setParticles(nextParticles);
 	beliefTree_->updateRoot(std::move(newBelief));
-	cout << "numNextParticles: " << nextParticles.size() << endl;
-
 	return true;
 }
 

@@ -188,12 +188,10 @@ void PartitionAgent::splitNode(TreeElement *node, const FloatType &explorationFa
 	child1Ptr->as<PartitionNode>()->averageReward_ = node->as<PartitionNode>()->averageReward_;
 	child1Ptr->as<PartitionNode>()->numVisits_ = node->as<PartitionNode>()->numVisits_;
 	child2Ptr->as<PartitionNode>()->setAction(actionChild);
-	FloatType numVisitsBelief = ((FloatType)(associatedBeliefNode_->getTotalVisitCount()));
 	
 	FloatType diam =
 	    child1Ptr->as<PartitionNode>()->getPartition()->as<Partition>()->getDiameter(diameterEstimator_, distanceMeasure_, randomEngine) / rootDiameter_;
 	bool split = static_cast<const ADVTOptions *>(options_)->splitExplorationFactor * child1Ptr->as<PartitionNode>()->getNumVisits() >= 1.0 / (diam * diam);
-
 	if (split and child1Ptr->as<PartitionNode>()->getPartition()->as<Partition>()->isSplittable(rootDiameter_)) {
 		splitNode(child1Ptr, explorationFactor, explorationFactorDiameter);
 	}	

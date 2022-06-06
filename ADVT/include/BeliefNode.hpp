@@ -55,25 +55,17 @@ public:
 				childActionEdge = (*it).get();
 				break;
 			}
-		}		
+		}
 
-		TreeElement *const observationEdge = childActionEdge->as<ActionEdge>()->getOrCreateObservationEdge(observation);
-		return observationEdge->as<ObservationEdge>()->getOrCreateChild<NodeType>();;
+		return
+		    childActionEdge->as<ActionEdge>()->getOrCreateObservationEdge(observation)->as<ObservationEdge>()->getOrCreateChild<NodeType>();;
 	}
 
 	template<typename NodeType>
-	TreeElement *const getOrCreateChild(const TreeElement *actionEdge,
+	TreeElement *const getOrCreateChild(TreeElement *actionEdge,
 	                                    const ObservationSharedPtr &observation) {
-		TreeElement *childActionEdge = nullptr;
-		for (auto it = getChildren(); it != children_.end(); it++) {
-			if ((*it).get() == actionEdge) {
-				childActionEdge = (*it).get();
-				break;
-			}
-		}		
-
-		TreeElement *const observationEdge = childActionEdge->as<ActionEdge>()->getOrCreateObservationEdge(observation);
-		return observationEdge->as<ObservationEdge>()->getOrCreateChild<NodeType>();;
+		return
+		    actionEdge->as<ActionEdge>()->getOrCreateObservationEdge(observation)->as<ObservationEdge>()->getOrCreateChild<NodeType>();
 	}
 
 	std::pair<TreeElement *, TreeElement *> const selectAction();

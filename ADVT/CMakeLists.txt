@@ -1,12 +1,10 @@
 cmake_minimum_required (VERSION 3.5.1)
 project (ADVT)
 
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -msse2 -mfpmath=sse -DEIGEN_NO_DEBUG")
 if (NOT CMAKE_BUILD_TYPE)
-   set(CMAKE_BUILD_TYPE RelWithDebInfo) 
+   set(CMAKE_BUILD_TYPE Release) 
 endif()
-
-#set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
-set(CMAKE_CXX_FLAGS_RELEASE "-fPIC -O3 -msse2 -mfpmath=sse -DEIGEN_NO_DEBUG -std=c++11")
 
 include(GNUInstallDirs)
 if(DEFINED ENV{OPPT_SEARCH_PATH})
@@ -20,7 +18,7 @@ endif()
 
 find_package(CGAL REQUIRED)
 
-set(HOOT_SRC 
+set(ADVT_SRC 
     ${CMAKE_CURRENT_LIST_DIR}/main.cpp
                ${CMAKE_CURRENT_LIST_DIR}/src/ADVT.cpp
                ${CMAKE_CURRENT_LIST_DIR}/src/PartitionNode.cpp  
@@ -45,7 +43,7 @@ set(HOOT_SRC
 
 
 add_executable(advt
-               ${HOOT_SRC})
+               ${ADVT_SRC})
 target_include_directories(advt 
 	PUBLIC 
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

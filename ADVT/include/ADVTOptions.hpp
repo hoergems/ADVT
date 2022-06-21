@@ -21,8 +21,6 @@ public:
 
     FloatType splitExplorationFactor = 0.0;
 
-    FloatType minimumSplittingDiam = 0.0;
-
     unsigned int numDiameterSamples = 2;
 
     bool resetTree = false;
@@ -51,7 +49,6 @@ public:
         parser->addOption<FloatType>("ADVT", "explorationFactor", &ADVTOptions::explorationFactor);
         parser->addOption<FloatType>("ADVT", "explorationFactorDiameter", &ADVTOptions::explorationFactorDiameter);        
         parser->addOption<FloatType>("ADVT", "splitExplorationFactor", &ADVTOptions::splitExplorationFactor);
-        parser->addOption<FloatType>("ADVT", "minimumSplittingDiam", &ADVTOptions::minimumSplittingDiam);
         parser->addOption<unsigned int>("ADVT", "numDiameterSamples", &ADVTOptions::numDiameterSamples);
         parser->addOption<bool>("ADVT", "resetTree", &ADVTOptions::resetTree);
         parser->addOptionWithDefault<unsigned int>("ADVT", "maximumDepth", &ADVTOptions::maximumDepth, 0);

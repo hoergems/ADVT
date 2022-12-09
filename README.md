@@ -3,9 +3,9 @@ Adaptive Discretization using Voronoi Trees for Continuous-Action POMDPs (ADVT)
 This repository contains the  C++ source code of our online POMDP solver ADVT: 
 ```
 @inproceedings{hoerger22:AVDT,
-  title={Adaptive Discretization using Voronoi Trees for Continuous-Action POMDPs (ADVT)},
-  author={Hoerger, Marcus and Kurniawati, Hanna and Elfes, Alberto},
-  booktitle={Proc. Int. Workshop on the Algorithmic Foundations of Robotics (To appear)},  
+  title={Adaptive Discretization using Voronoi Trees for Continuous-Action POMDPs},
+  author={Hoerger, Marcus and Kurniawati, Hanna and Kroese, Dirk and Ye, Nan},
+  booktitle={Proc. Int. Workshop on the Algorithmic Foundations of Robotics},  
   year={2022}
 }
 ```
